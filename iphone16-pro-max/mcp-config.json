@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "mobile-mcp-iphone16pm": {
+      "command": "npx",
+      "args": ["-y", "@mobilenext/mobile-mcp@latest"],
+      "env": {
+        "MOBILEMCP_DISABLE_TELEMETRY": "1",
+        "MOBILEMCP_DEVICE_UDID": "REPLACE_WITH_YOUR_UDID",
+        "MOBILEMCP_PLATFORM": "ios",
+        "MOBILEMCP_WDA_HOST": "localhost",
+        "MOBILEMCP_WDA_PORT": "8100",
+        "MOBILEMCP_SCREENSHOT_DIR": "~/apex-screenshots/iphone16pm",
+        "MOBILEMCP_LOG_LEVEL": "info"
+      }
+    }
+  },
+  "_apex_notes": {
+    "device": "iPhone 16 Pro Max",
+    "screen": "2868x1320 @ 3x",
+    "setup": "Run wda-setup.sh first, then replace REPLACE_WITH_YOUR_UDID with output of: xcrun xctrace list devices",
+    "auth": "For SSE mode with auth: add MOBILEMCP_AUTH=<token> and run with --listen flag"
+  }
+}

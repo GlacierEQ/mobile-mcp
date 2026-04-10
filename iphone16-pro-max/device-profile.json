@@ -1,0 +1,61 @@
+{
+  "device": {
+    "name": "iPhone 16 Pro Max",
+    "model": "A3293",
+    "os": "iOS 18",
+    "udid": "REPLACE_WITH_YOUR_UDID",
+    "connection": "usb"
+  },
+  "screen": {
+    "physicalWidth": 2868,
+    "physicalHeight": 1320,
+    "logicalWidth": 956,
+    "logicalHeight": 440,
+    "scaleFactor": 3,
+    "orientation": "portrait",
+    "refreshRate": 120
+  },
+  "safeArea": {
+    "top": 59,
+    "bottom": 34,
+    "left": 0,
+    "right": 0
+  },
+  "dynamicIsland": {
+    "centerX": 478,
+    "centerY": 11,
+    "width": 120,
+    "height": 37,
+    "safeMargin": 20
+  },
+  "zones": {
+    "statusBar": { "y": 0, "height": 59 },
+    "safeContent": { "y": 59, "height": 847 },
+    "homeIndicator": { "y": 906, "height": 34 },
+    "leftEdge": { "x": 0, "width": 4 },
+    "rightEdge": { "x": 952, "width": 4 }
+  },
+  "commonCoords": {
+    "screenCenter": { "x": 478, "y": 478 },
+    "topLeft": { "x": 20, "y": 80 },
+    "topRight": { "x": 936, "y": 80 },
+    "bottomLeft": { "x": 20, "y": 880 },
+    "bottomRight": { "x": 936, "y": 880 },
+    "homeSwipe": { "startX": 478, "startY": 930, "endX": 478, "endY": 400 },
+    "controlCenterSwipe": { "startX": 936, "startY": 5, "endX": 936, "endY": 300 },
+    "notificationSwipe": { "startX": 20, "startY": 5, "endX": 20, "endY": 300 },
+    "appSwitcherSwipe": { "startX": 478, "startY": 935, "endX": 478, "endY": 500, "pauseMs": 500 }
+  },
+  "wda": {
+    "host": "localhost",
+    "port": 8100,
+    "bundleId": "com.facebook.WebDriverAgentRunner",
+    "timeout": 60000
+  },
+  "apex": {
+    "deviceAlias": "apex-iphone16pm",
+    "telemetryDisabled": true,
+    "screenshotDir": "~/apex-screenshots/iphone16pm",
+    "logLevel": "info"
+  }
+}
