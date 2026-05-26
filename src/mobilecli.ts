@@ -2,6 +2,32 @@ import { existsSync } from "node:fs";
 import { dirname, join, sep } from "node:path";
 import { execFileSync, spawn, ChildProcess } from "node:child_process";
 
+export interface MobilecliCrashEntry {
+	processName: string;
+	timestamp: string;
+	id: string;
+}
+
+export interface MobilecliCrashesListResponse {
+	status: "ok";
+	data: MobilecliCrashEntry[];
+}
+
+export interface MobilecliCrashGetResponse {
+	status: "ok";
+	data: {
+		content: string;
+		id: string;
+	};
+}
+
+export interface MobilecliAgentStatusResponse {
+	status: "ok" | "fail";
+	data: {
+		message: string;
+	};
+}
+
 export interface MobilecliDevicesOptions {
 	includeOffline?: boolean;
 	platform?: "ios" | "android";
@@ -79,7 +105,7 @@ export class Mobilecli {
 			// We're inside node_modules, go to the last node_modules in the path
 			const nodeModulesParts = pathParts.slice(0, lastNodeModulesIndex + 1);
 			const lastNodeModulesPath = nodeModulesParts.join(sep);
-			const mobilecliPath = join(lastNodeModulesPath, "@mobilenext", "mobilecli", "bin", binaryName);
+			const mobilecliPath = join(lastNodeModulesPath, "mobilecli", "bin", binaryName);
 
 			if (existsSync(mobilecliPath)) {
 				return mobilecliPath;
@@ -89,7 +115,7 @@ export class Mobilecli {
 		// Not in node_modules, look one directory up from current script
 		const scriptDir = dirname(__filename);
 		const parentDir = dirname(scriptDir);
-		const mobilecliPath = join(parentDir, "node_modules", "@mobilenext", "mobilecli", "bin", binaryName);
+		const mobilecliPath = join(parentDir, "node_modules", "mobilecli", "bin", binaryName);
 
 		if (existsSync(mobilecliPath)) {
 			return mobilecliPath;
@@ -111,16 +137,35 @@ export class Mobilecli {
 		}
 	}
 
-	fleetListDevices(): string {
-		return this.executeCommand(["fleet", "list-devices"]);
+	remoteListDevices(): string {
+		return this.executeCommand(["remote", "list-devices"]);
 	}
 
-	fleetAllocate(platform: "ios" | "android"): string {
-		return this.executeCommand(["fleet", "allocate", "--platform", platform]);
+	remoteAllocate(platform: "ios" | "android"): string {
+		return this.executeCommand(["remote", "allocate", "--platform", platform]);
 	}
 
-	fleetRelease(deviceId: string): string {
-		return this.executeCommand(["fleet", "release", "--device", deviceId]);
+	remoteRelease(deviceId: string): string {
+		return this.executeCommand(["remote", "release", "--device", deviceId]);
+	}
+
+	crashesList(deviceId: string): MobilecliCrashesListResponse {
+		const output = this.executeCommand(["device", "crashes", "list", "--device", deviceId]);
+		return JSON.parse(output) as MobilecliCrashesListResponse;
+	}
+
+	crashesGet(deviceId: string, id: string): MobilecliCrashGetResponse {
+		const output = this.executeCommandBuffer(["device", "crashes", "get", id, "--device", deviceId]);
+		return JSON.parse(output.toString().trim()) as MobilecliCrashGetResponse;
+	}
+
+	agentStatus(deviceId: string): MobilecliAgentStatusResponse {
+		const output = this.executeCommand(["agent", "status", "--device", deviceId]);
+		return JSON.parse(output) as MobilecliAgentStatusResponse;
+	}
+
+	agentInstall(deviceId: string): void {
+		this.executeCommand(["agent", "install", "--device", deviceId]);
 	}
 
 	getDevices(options?: MobilecliDevicesOptions): MobilecliDevicesResponse {

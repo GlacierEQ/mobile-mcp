@@ -1,7 +1,7 @@
 name: Build
 permissions:
   id-token: write
-  contents: write
+  contents: read
 
 on:
   push:
@@ -16,19 +16,13 @@ on:
 jobs:
   build:
     permissions:
-      id-token: write  # Required for npm trusted publishing with OIDC
-      contents: write
+      id-token: write
+      contents: read
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v5
-
-    - name: Setup Java
-      uses: actions/setup-java@v5
-      with:
-        distribution: 'temurin'
-        java-version: '17'
 
     - name: Use Node.js 24
       uses: actions/setup-node@v5
@@ -37,7 +31,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Install dependencies
-      run: npm install --ignore-scripts
+      run: npm ci --ignore-scripts
 
     - name: Audit
       run: npm audit --audit-level high --omit dev
@@ -47,9 +41,10 @@ jobs:
 
     - name: Update version
       if: github.ref_type == 'tag'
+      env:
+        VERSION: ${{ github.ref_name }}
       run: |
-        npm version "${{ github.ref_name }}" --no-git-tag-version
-        npm update
+        npm version "$VERSION" --no-git-tag-version
 
     - name: Build
       run: |
@@ -62,13 +57,13 @@ jobs:
 
     - name: Publish on github mcp registry
       if: github.ref_type == 'tag'
+      env:
+        VERSION: ${{ github.ref_name }}
       run: |
-        # get homebrew in path
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         brew install mcp-publisher
         mcp-publisher login github-oidc
         # patch version
-        sed -i "s/{{VERSION}}/${{ github.ref_name }}/g" server.json
+        sed -i "s/{{VERSION}}/$VERSION/g" server.json
         mcp-publisher publish
         mcp-publisher logout
-
